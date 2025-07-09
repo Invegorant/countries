@@ -25,6 +25,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql:42.7.3'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 tasks.named('test') {
