@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.4'
+    id 'com.github.edeandrea.xjc-generation' version '1.6'
 }
 
 group = 'com.invegorant'
@@ -29,6 +30,9 @@ dependencyManagement {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation('org.springframework.boot:spring-boot-starter-web-services') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'com.tailrocks.graphql:graphql-datetime-spring-boot-starter:6.0.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -37,10 +41,33 @@ dependencies {
     implementation 'io.grpc:grpc-services'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'org.postgresql:postgresql:42.7.3'
+    xjc 'org.glassfish.jaxb:jaxb-xjc:4.0.5'
+    implementation 'wsdl4j:wsdl4j:1.6.3'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
+}
+
+xjcGeneration {
+    defaultAdditionalXjcOptions = ['encoding': 'UTF-8']
+    schemas {
+        wsdlSchema {
+            schemaRootDir = "$projectDir/src/main/resources"
+            schemaFile = 'country.xsd'
+            javaPackageName = 'com.invegorant.countries.xml.country'
+            sourceSet = 'main'
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir('src/main/java')
+            srcDir("$buildDir/generated-sources/main/xjc")
+        }
+    }
 }
 
 protobuf {
